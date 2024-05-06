@@ -2,6 +2,7 @@
 import csv
 import pygame
 
+from camera import *
 from entities import *
 from overlays import *
 from settings import *
@@ -58,6 +59,9 @@ class Game:
         self.level = STARTING_LEVEL
         self.world = World(self, self.hero)
         self.current_zone = None
+
+        # maybe move this?
+        self.camera = Camera(self.screen, self.world, self.hero, 0.9)
 
     def start_level(self):
         self.status = PLAYING
@@ -128,6 +132,9 @@ class Game:
                 if event.key == pygame.K_g:
                     self.grid.toggle()
                     processed = True
+                elif event.key == pygame.K_c:
+                    self.camera.toggle()
+                    processed = True
 
             if not processed:
                 filtered_events.append(event)
@@ -139,29 +146,13 @@ class Game:
         if self.status == PLAYING:
             self.world.update()
 
+        self.camera.update()
         self.check_status()
-
-    def get_offsets(self):
-        if self.hero.rect.centerx < WIDTH // 2:
-            offset_x = 0
-        elif self.hero.rect.centerx > self.world.width - WIDTH // 2:
-            offset_x = self.world.width - WIDTH
-        else:
-            offset_x = self.hero.rect.centerx - WIDTH // 2
-
-        if self.hero.rect.centery < HEIGHT // 2:
-            offset_y = 0
-        elif self.hero.rect.centery > self.world.height - HEIGHT // 2:
-            offset_y = self.world.height - HEIGHT
-        else:
-            offset_y = self.hero.rect.centery - HEIGHT // 2
-
-        return offset_x, offset_y
     
     def render(self):
         self.screen.fill(SKY_BLUE)
         
-        offset_x, offset_y = self.get_offsets()
+        offset_x, offset_y = self.camera.get_offsets()
 
         for sprite in self.world.nearby_sprites:
             x = sprite.rect.x - offset_x
@@ -181,6 +172,7 @@ class Game:
         elif self.status == PAUSE:
             self.pause_screen.draw(self.screen)
 
+        self.camera.draw(self.screen)
         self.grid.draw(self.screen, offset_x, offset_y)
 
     def play(self):

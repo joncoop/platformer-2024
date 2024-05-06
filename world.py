@@ -14,9 +14,9 @@ class World:
 
         self.print_info = True # Mostly for debugging
 
-        self.load_level()
+        self.load()
         
-    def load_level(self):
+    def load(self):
         with open(self.filepath, 'r') as file:
             reader = csv.reader(file)
             map_data = list(reader)
@@ -68,13 +68,16 @@ class World:
     def print_world_info(self):
         print(f'World dimensions in tiles: {self.width // GRID_SIZE}, {self.height // GRID_SIZE}')
         print(f'World dimensions in pixels: {self.width}, {self.height}')
+
         total_sprites = len(self.players) + len(self.platforms) + len(self.goals) + len(self.enemies) + len(self.items)
         num_enemies = len(self.enemies)
         print(f'Num sprites: {total_sprites}')
         print(f'Num enemies: {num_enemies}')
 
+        self.print_zone()
+
     def print_zone(self):
-        print(f'Entered zone {self.current_zone}')
+        print(f'Current zone: {self.current_zone}')
 
     def get_current_zone(self):
         x = self.hero.rect.centerx // WIDTH
@@ -96,29 +99,32 @@ class World:
         self.current_zone = self.get_current_zone()
 
         if self.current_zone != previous_zone:
-            region = pygame.rect.Rect(0, 0, 3 * WIDTH, 3 * HEIGHT)
-            region.center = self.hero.rect.center
+            # The inner_region must extend 1.5 screen widths and heights from the center.
+            inner_region = pygame.rect.Rect(0, 0, 3 * WIDTH, 3 * HEIGHT)
+            inner_region.center = self.hero.rect.center
 
-            players = self.find_sprites_in_region(self.players, region)
+            outer_region = inner_region.inflate(2 * GRID_SIZE, 2 * GRID_SIZE)
+
+            # Things that interact with other objects should be in the inner region.
+            players = self.find_sprites_in_region(self.players, inner_region)
             self.nearby_players = pygame.sprite.Group(players)
-            
-            platforms = self.find_sprites_in_region(self.platforms, region)
+
+            enemies = self.find_sprites_in_region(self.enemies, inner_region)
+            self.nearby_enemies = pygame.sprite.Group(enemies)
+
+            # Things that don't interact with other objects should be in the inner region.
+            platforms = self.find_sprites_in_region(self.platforms, outer_region)
             self.nearby_platforms = pygame.sprite.Group(platforms)
             
-            goals = self.find_sprites_in_region(self.goals, region)
+            goals = self.find_sprites_in_region(self.goals, outer_region)
             self.nearby_goals = pygame.sprite.Group(goals)
-            
-            enemies = self.find_sprites_in_region(self.enemies, region)
-            self.nearby_enemies = pygame.sprite.Group(enemies)
-            
-            items = self.find_sprites_in_region(self.items, region)
+                        
+            items = self.find_sprites_in_region(self.items, outer_region)
             self.nearby_items = pygame.sprite.Group(items)
             
+            # Put everyone in nearby_sprites for drawing and updating.
             self.nearby_sprites = pygame.sprite.Group()
             self.nearby_sprites.add(players, platforms, goals, enemies, items)
-
-            if self.print_info:
-                self.print_zone()
 
     def update(self):
         self.get_current_zone()
