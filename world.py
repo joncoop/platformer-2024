@@ -46,9 +46,9 @@ class World:
                 elif value == CLOUD:
                     self.enemies.add( Cloud(self, self.game.cloud_img, loc) )
                 elif value == SPIKEBALL:
-                    self.enemies.add( SpikeBall(self, self.game.spikeball_img, loc) )
+                    self.enemies.add( SpikeBall(self, self.game.spikeball_imgs, loc) )
                 elif value == SPIKEMAN:
-                    self.enemies.add( SpikeMan(self, self.game.spikeman_img, loc) )
+                    self.enemies.add( SpikeMan(self, self.game.spikeman_imgs_right, loc) )
                 elif value == GEM:
                     self.items.add( Gem(self, self.game.gem_img, loc) )
                 elif value == HEART:

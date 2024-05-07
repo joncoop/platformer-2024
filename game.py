@@ -26,14 +26,24 @@ class Game:
         self.new_game()
 
     def load_assets(self):
-        self.hero_img = pygame.image.load(HERO_IMG).convert_alpha()
+        self.hero_imgs_idle_right = [pygame.image.load(HERO_IMG_IDLE).convert_alpha()]
+        self.hero_imgs_walk_right = [pygame.image.load(HERO_IMG_WALK1).convert_alpha(),
+                                     pygame.image.load(HERO_IMG_WALK2).convert_alpha()]
+        self.hero_imgs_jump_right = [pygame.image.load(HERO_IMG_JUMP).convert_alpha()]
+        self.hero_imgs_idle_left = [pygame.transform.flip(image, True, False) for image in self.hero_imgs_idle_right]
+        self.hero_imgs_walk_left = [pygame.transform.flip(image, True, False) for image in self.hero_imgs_walk_right]
+        self.hero_imgs_jump_left = [pygame.transform.flip(image, True, False) for image in self.hero_imgs_jump_right]
 
         self.grass_dirt_img = pygame.image.load(GRASS_IMG).convert_alpha()
         self.block_img = pygame.image.load(BLOCK_IMG).convert_alpha()
 
         self.cloud_img = pygame.image.load(CLOUD_IMG).convert_alpha()
-        self.spikeball_img = pygame.image.load(SPIKEBALL_IMG).convert_alpha()
-        self.spikeman_img = pygame.image.load(SPIKEMAN_IMG).convert_alpha()
+        self.spikeball_imgs = [pygame.image.load(SPIKEBALL_IMG1).convert_alpha(),
+                               pygame.image.load(SPIKEBALL_IMG2).convert_alpha()]
+        
+        self.spikeman_imgs_right = [pygame.image.load(SPIKEMAN_IMG1).convert_alpha(),
+                                    pygame.image.load(SPIKEMAN_IMG2).convert_alpha()]
+        self.spikeman_imgs_left = [pygame.transform.flip(image, True, False) for image in self.spikeman_imgs_right]
 
         self.gem_img = pygame.image.load(GEM_IMG).convert_alpha()
         self.heart_img = pygame.image.load(HEART_IMG).convert_alpha()
@@ -52,7 +62,7 @@ class Game:
         
     def new_game(self):
         # Make the hero here so it persists across levels
-        self.hero = Hero(None, self.hero_img, CONTROLS)
+        self.hero = Hero(None, self.hero_imgs_idle_right, CONTROLS)
 
         # Go to first level
         self.status = START

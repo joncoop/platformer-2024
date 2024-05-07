@@ -22,7 +22,10 @@ SECONDARY_FONT = 'assets/fonts/Dinomouse-Regular.otf'
 
 # Images
 ''' hero '''
-HERO_IMG = 'assets/images/characters/player_idle.png'
+HERO_IMG_IDLE = 'assets/images/characters/player_idle.png'
+HERO_IMG_WALK1 = 'assets/images/characters/player_walk1.png'
+HERO_IMG_WALK2 = 'assets/images/characters/player_walk2.png'
+HERO_IMG_JUMP = 'assets/images/characters/player_jump.png'
 
 ''' tiles '''
 GRASS_IMG = 'assets/images/tiles/grass_dirt.png'
@@ -35,9 +38,11 @@ GEM_IMG = 'assets/images/items/gem.png'
 HEART_IMG = 'assets/images/items/heart.png'
 
 ''' enemies '''
-SPIKEBALL_IMG = 'assets/images/characters/spikeball1.png'
-SPIKEMAN_IMG = 'assets/images/characters/spikeman_walk1.png'
 CLOUD_IMG = 'assets/images/characters/cloud.png'
+SPIKEBALL_IMG1 = 'assets/images/characters/spikeball1.png'
+SPIKEBALL_IMG2 = 'assets/images/characters/spikeball2.png'
+SPIKEMAN_IMG1 = 'assets/images/characters/spikeman_walk1.png'
+SPIKEMAN_IMG2 = 'assets/images/characters/spikeman_walk2.png'
 
 # Sounds
 JUMP_SND = 'assets/sounds/jump.wav'

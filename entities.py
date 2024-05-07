@@ -104,6 +104,32 @@ class Entity(pygame.sprite.Sprite):
         self.velocity.x *= -1
 
 
+class AnimatedEntity(Entity):
+
+    def __init__(self, world, images, loc=[0, 0]):        
+        super().__init__(world, images[0], loc)
+        
+        self.images = images
+        self.animation_speed = 150 # Milliseconds
+        self.last_time = pygame.time.get_ticks()
+        self.image_index = 0
+
+    def set_image_list(self):
+        self.images = self.images
+
+    def animate(self):
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.last_time > self.animation_speed:
+            self.set_image_list()
+
+            self.image_index += 1
+            if self.image_index >= len(self.images):
+                self.image_index = 0
+
+            self.image = self.images[self.image_index]
+            self.last_time = current_time
+
 # Tiles
 class Platform(Entity):
 
@@ -112,10 +138,10 @@ class Platform(Entity):
 
 
 # Characters
-class Hero(Entity):
+class Hero(AnimatedEntity):
 
-    def __init__(self, world, image, controls):
-        super().__init__(world, image)
+    def __init__(self, world, images, controls):
+        super().__init__(world, images)
         self.controls = controls
 
         self.acceleration = 0.8
@@ -123,6 +149,7 @@ class Hero(Entity):
         self.hearts = HERO_HEARTS
         self.max_hearts = self.hearts
         self.score = 0
+        self.facing_right = True
 
         self.respawn_location = self.location
 
@@ -146,12 +173,16 @@ class Hero(Entity):
 
         if self.velocity.x < -1 * HERO_SPEED:
             self.velocity.x = -1 * HERO_SPEED
+
+        self.facing_right = False
     
     def go_right(self):
         self.velocity.x += self.acceleration 
 
         if self.velocity.x > HERO_SPEED:
             self.velocity.x = HERO_SPEED
+
+        self.facing_right = True
 
     def stop(self):
         if self.velocity.x < -1 * self.acceleration:
@@ -202,6 +233,24 @@ class Hero(Entity):
         for item in hits:
             item.apply(self)
     
+    def set_image_list(self):
+        if self.facing_right:
+            if self.on_platform:
+                if self.velocity.x == 0:
+                    self.images = self.world.game.hero_imgs_idle_right
+                else:
+                    self.images = self.world.game.hero_imgs_walk_right
+            else:
+                self.images = self.world.game.hero_imgs_jump_right
+        else:
+            if self.on_platform:
+                if self.velocity.x == 0:
+                    self.images = self.world.game.hero_imgs_idle_left
+                else:
+                    self.images = self.world.game.hero_imgs_walk_left
+            else:
+                self.images = self.world.game.hero_imgs_jump_left
+
     def update(self):
         self.apply_gravity()
         self.check_enemies() # put before movement to override user input and gravity for bounce off enemy
@@ -218,6 +267,8 @@ class Hero(Entity):
 
         if hit_platform_y:
             self.velocity.y = 0
+
+        self.animate()
 
 
 # Enemies
@@ -236,10 +287,10 @@ class Cloud(Entity):
             self.turn_around()
 
 
-class SpikeBall(Entity):
+class SpikeBall(AnimatedEntity):
 
-    def __init__(self, world, image, loc):
-        super().__init__(world, image, loc)
+    def __init__(self, world, images, loc):
+        super().__init__(world, images, loc)
 
         self.velocity.x = -1 * SPIKEBALL_SPEED
 
@@ -257,12 +308,21 @@ class SpikeBall(Entity):
         if hit_platform_y:
             self.velocity.y = 0
 
-class SpikeMan(Entity):
+        self.animate()
 
-    def __init__(self, world, image, loc):
-        super().__init__(world, image, loc)
 
-        self.velocity.x = -1 * SPIKEBALL_SPEED
+class SpikeMan(AnimatedEntity):
+
+    def __init__(self, world, images, loc):
+        super().__init__(world, images, loc)
+
+        self.velocity.x = -1 * SPIKEMAN_SPEED
+
+    def set_image_list(self):
+        if self.velocity.x > 0:
+            self.images = self.world.game.spikeman_imgs_right
+        else:
+            self.images = self.world.game.spikeman_imgs_left
 
     def update(self):
         self.apply_gravity()
@@ -278,6 +338,8 @@ class SpikeMan(Entity):
 
         if hit_platform_y:
             self.velocity.y = 0
+
+        self.animate()
 
 
 # Items
