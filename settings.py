@@ -3,8 +3,8 @@ import pygame
 
 # Window settings
 GRID_SIZE = 64
-WIDTH = 16 * GRID_SIZE
-HEIGHT = 9 * GRID_SIZE
+SCREEN_WIDTH = 16 * GRID_SIZE
+SCREEN_HEIGHT = 9 * GRID_SIZE
 TITLE = "My Awesome Game"
 FPS = 60
 

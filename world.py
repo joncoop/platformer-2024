@@ -1,8 +1,8 @@
 import csv
 import pygame
 
-from entities import *
-from settings import *
+import entities
+import settings
 
 
 class World:
@@ -28,36 +28,36 @@ class World:
         self.enemies = pygame.sprite.Group()
         self.items = pygame.sprite.Group()
 
-        self.width = len(map_data[0]) * GRID_SIZE
-        self.height = len(map_data) * GRID_SIZE
+        self.width = len(map_data[0]) * settings.GRID_SIZE
+        self.height = len(map_data) * settings.GRID_SIZE
 
         for y, row in enumerate(map_data):
             for x, value in enumerate(row):
                 loc = [x, y]
 
-                if value == HERO: # won't work with multiplayer game
+                if value == settings.HERO: # won't work with multiplayer game
                     self.hero.world = self
                     self.hero.move_to(loc)
                     self.players.add(self.hero)
-                elif value == BLOCK:
-                    self.platforms.add( Platform(self, self.game.block_img, loc) )
-                elif value == GRASS:
-                    self.platforms.add( Platform(self, self.game.grass_dirt_img, loc) )
-                elif value == CLOUD:
-                    self.enemies.add( Cloud(self, self.game.cloud_img, loc) )
-                elif value == SPIKEBALL:
-                    self.enemies.add( SpikeBall(self, self.game.spikeball_imgs, loc) )
-                elif value == SPIKEMAN:
-                    self.enemies.add( SpikeMan(self, self.game.spikeman_imgs_right, loc) )
-                elif value == GEM:
-                    self.items.add( Gem(self, self.game.gem_img, loc) )
-                elif value == HEART:
-                    self.items.add( Heart(self, self.game.heart_img, loc) )
-                elif value == FLAG:
+                elif value == settings.BLOCK:
+                    self.platforms.add( entities.Platform(self, self.game.block_img, loc) )
+                elif value == settings.GRASS:
+                    self.platforms.add( entities.Platform(self, self.game.grass_dirt_img, loc) )
+                elif value == settings.CLOUD:
+                    self.enemies.add( entities.Cloud(self, self.game.cloud_img, loc) )
+                elif value == settings.SPIKEBALL:
+                    self.enemies.add( entities.SpikeBall(self, self.game.spikeball_imgs, loc) )
+                elif value == settings.SPIKEMAN:
+                    self.enemies.add( entities.SpikeMan(self, self.game.spikeman_imgs_right, loc) )
+                elif value == settings.GEM:
+                    self.items.add( entities.Gem(self, self.game.gem_img, loc) )
+                elif value == settings.HEART:
+                    self.items.add( entities.Heart(self, self.game.heart_img, loc) )
+                elif value == settings.FLAG:
                     if len(self.goals) == 0:
-                        self.goals.add( Platform(self, self.game.flag_img, loc) )
+                        self.goals.add( entities.Platform(self, self.game.flag_img, loc) )
                     else:
-                        self.goals.add( Platform(self, self.game.flagpole_img, loc) )
+                        self.goals.add( entities.Platform(self, self.game.flagpole_img, loc) )
 
         self.current_zone = None
         self.find_nearby_sprites()
@@ -66,7 +66,7 @@ class World:
             self.print_world_info()
 
     def print_world_info(self):
-        print(f'World dimensions in tiles: {self.width // GRID_SIZE}, {self.height // GRID_SIZE}')
+        print(f'World dimensions in tiles: {self.width // settings.GRID_SIZE}, {self.height // settings.GRID_SIZE}')
         print(f'World dimensions in pixels: {self.width}, {self.height}')
 
         total_sprites = len(self.players) + len(self.platforms) + len(self.goals) + len(self.enemies) + len(self.items)
@@ -80,8 +80,8 @@ class World:
         print(f'Current zone: {self.current_zone}')
 
     def get_current_zone(self):
-        x = self.hero.rect.centerx // WIDTH
-        y = self.hero.rect.centery // HEIGHT
+        x = self.hero.rect.centerx // settings.SCREEN_WIDTH
+        y = self.hero.rect.centery // settings.SCREEN_HEIGHT
 
         return x, y
     
@@ -100,10 +100,10 @@ class World:
 
         if self.current_zone != previous_zone:
             # The inner_region must extend 1.5 screen widths and heights from the center.
-            inner_region = pygame.rect.Rect(0, 0, 3 * WIDTH, 3 * HEIGHT)
+            inner_region = pygame.rect.Rect(0, 0, 3 * settings.SCREEN_WIDTH, 3 * settings.SCREEN_HEIGHT)
             inner_region.center = self.hero.rect.center
 
-            outer_region = inner_region.inflate(2 * GRID_SIZE, 2 * GRID_SIZE)
+            outer_region = inner_region.inflate(2 * settings.GRID_SIZE, 2 * settings.GRID_SIZE)
 
             # Things that interact with other objects should be in the inner region.
             players = self.find_sprites_in_region(self.players, inner_region)

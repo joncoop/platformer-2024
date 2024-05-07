@@ -1,6 +1,6 @@
 import pygame
 
-from settings import *
+import settings
 
 
 class Entity(pygame.sprite.Sprite):
@@ -15,16 +15,16 @@ class Entity(pygame.sprite.Sprite):
         self.move_to(loc)
 
     def move_to(self, loc):
-        center_x = loc[0] * GRID_SIZE + GRID_SIZE // 2
-        center_y = loc[1] * GRID_SIZE + GRID_SIZE // 2
+        center_x = loc[0] * settings.GRID_SIZE + settings.GRID_SIZE // 2
+        center_y = loc[1] * settings.GRID_SIZE + settings.GRID_SIZE // 2
         
         self.location = pygame.Vector2(center_x, center_y)
         self.velocity = pygame.Vector2(0, 0)
         self.rect.center = self.location
 
     def apply_gravity(self):
-        self.velocity.y += GRAVITY
-        self.velocity.y = min(self.velocity.y, TERMINAL_VELOCITY)
+        self.velocity.y += settings.GRAVITY
+        self.velocity.y = min(self.velocity.y, settings.TERMINAL_VELOCITY)
 
     @property
     def on_platform(self):
@@ -146,7 +146,7 @@ class Hero(AnimatedEntity):
 
         self.acceleration = 0.8
         self.invinciblity_time = 0
-        self.hearts = HERO_HEARTS
+        self.hearts = settings.HERO_HEARTS
         self.max_hearts = self.hearts
         self.score = 0
         self.facing_right = True
@@ -171,16 +171,16 @@ class Hero(AnimatedEntity):
     def go_left(self):
         self.velocity.x -= self.acceleration 
 
-        if self.velocity.x < -1 * HERO_SPEED:
-            self.velocity.x = -1 * HERO_SPEED
+        if self.velocity.x < -1 * settings.HERO_SPEED:
+            self.velocity.x = -1 * settings.HERO_SPEED
 
         self.facing_right = False
     
     def go_right(self):
         self.velocity.x += self.acceleration 
 
-        if self.velocity.x > HERO_SPEED:
-            self.velocity.x = HERO_SPEED
+        if self.velocity.x > settings.HERO_SPEED:
+            self.velocity.x = settings.HERO_SPEED
 
         self.facing_right = True
 
@@ -194,7 +194,7 @@ class Hero(AnimatedEntity):
 
     def jump(self):
         if self.can_jump:
-            self.velocity.y = -1 * HERO_JUMP_POWER
+            self.velocity.y = -1 * settings.HERO_JUMP_POWER
 
     def act(self, events, pressed):
         for event in events:
@@ -216,12 +216,12 @@ class Hero(AnimatedEntity):
         if self.invinciblity_time == 0:
             for enemy in hits:
                 self.hearts -= 1
-                self.invinciblity_time = HERO_ESCAPE_TIME
+                self.invinciblity_time = settings.HERO_ESCAPE_TIME
 
                 dx = self.location.x - enemy.location.x
                 dy = self.location.y - enemy.location.y
                 bounce_velocity = pygame.Vector2(dx, dy)
-                bounce_velocity.scale_to_length(BOUNCE_SPEED)
+                bounce_velocity.scale_to_length(settings.BOUNCE_SPEED)
                 self.velocity = bounce_velocity
 
         elif self.invinciblity_time > 0:
@@ -277,7 +277,7 @@ class Cloud(Entity):
     def __init__(self, world, image, loc):
         super().__init__(world, image, loc)
 
-        self.velocity.x = -1 * CLOUD_SPEED
+        self.velocity.x = -1 * settings.CLOUD_SPEED
 
     def update(self):
         self.move_x()
@@ -292,7 +292,7 @@ class SpikeBall(AnimatedEntity):
     def __init__(self, world, images, loc):
         super().__init__(world, images, loc)
 
-        self.velocity.x = -1 * SPIKEBALL_SPEED
+        self.velocity.x = -1 * settings.SPIKEBALL_SPEED
 
     def update(self):
         self.apply_gravity()
@@ -316,7 +316,7 @@ class SpikeMan(AnimatedEntity):
     def __init__(self, world, images, loc):
         super().__init__(world, images, loc)
 
-        self.velocity.x = -1 * SPIKEMAN_SPEED
+        self.velocity.x = -1 * settings.SPIKEMAN_SPEED
 
     def set_image_list(self):
         if self.velocity.x > 0:
@@ -349,7 +349,7 @@ class Gem(Entity):
         super().__init__(world, image, loc)
 
     def apply(self, character):
-        character.score += GEM_VALUE
+        character.score += settings.GEM_VALUE
 
 
 class Heart(Entity):
