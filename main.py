@@ -1,8 +1,8 @@
-import game
+import platformer
 
 
 def main():
-    g = game.Game()
+    g = platformer.game.Game()
     g.play()
        
 
