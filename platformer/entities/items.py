@@ -1,6 +1,5 @@
 # Standard Library Imports
 
-
 # Third-Party Imports
 import pygame
 

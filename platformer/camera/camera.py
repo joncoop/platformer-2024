@@ -1,4 +1,9 @@
+# Standard Library Imports
+
+# Third-Party Imports
 import pygame
+
+# Local Imports
 
 
 class ScrollingCamera:
