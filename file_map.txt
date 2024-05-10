@@ -33,7 +33,7 @@ platformer/
 │   │   ├── __init__.py
 │   │   ├── grid.py   
 │   │   ├── hud.py   
-│   │   └── scenes.py  <-- I need a better name for this!   
+│   │   └── scenes.py
 │   │   
 │   └── world/
 │       ├── __init__.py
