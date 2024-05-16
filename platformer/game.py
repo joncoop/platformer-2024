@@ -94,7 +94,7 @@ class Game:
         # the code is a little clunky because of this.
 
         self.world = platformer.world.World(self.hero)
-        self.camera = platformer.camera.ScrollingCamera(self.screen, self.world, self.hero, 0.9)
+        self.camera = platformer.camera.ScrollingCamera(self.screen, self.world, self.hero, 0.7)
 
         self.filepath = 'assets/levels/map_data.csv'
         with open(self.filepath, 'r') as file:

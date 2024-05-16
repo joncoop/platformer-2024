@@ -1,4 +1,5 @@
 # Standard Library Imports
+import math
 
 # Third-Party Imports
 import pygame
@@ -12,7 +13,8 @@ class ScrollingCamera:
         self.surface = surface
         self.world = world
         self.target = target # sprite object to track
-        self.lag = lag # 0 <= lag < 1, Should I use log inside camera to make lag numbers more understandable?
+        #self.lag = lag - 1
+        self.lag = -(lag - 1) ** 2 + 1 # 0 <= lag < 1, made it more sensitive at low numbers
 
         self.last_position = self.target.rect.center
         self.focus = self.last_position
