@@ -140,7 +140,6 @@ class Game:
                         data['goals'].add( platformer.entities.Tile(self.world, self.flagpole_img, loc) )
             
         self.world.add_data(data) # is this too cute?
-        #self.camera.snap_to_target()
 
     def start_level(self):
         self.status = settings.PLAYING

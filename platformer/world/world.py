@@ -11,6 +11,7 @@ class World:
     
     def __init__(self, hero):
         self.hero = hero # really dumb here, just can't get nearby sprite stuff working without this
+                         # maybe could pass hero to update
         self.print_info = True # Mostly for debugging and fps optimizing
 
         self.current_zone = None
@@ -35,7 +36,7 @@ class World:
 
     def print_zone(self):
         if self.print_info:
-            print(f'Current zone: {self.current_zone}')
+            print(f'Current zone: {self.current_zone}, {len(self.nearby_sprites)} sprites in zone')
 
     def get_current_zone(self):
         x = self.hero.rect.centerx // settings.SCREEN_WIDTH
