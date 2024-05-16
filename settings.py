@@ -26,28 +26,6 @@ PRIMARY_FONT = 'assets/fonts/Dinomouse-Regular.otf'
 SECONDARY_FONT = 'assets/fonts/Dinomouse-Regular.otf'
 
 
-# Images
-HERO_IMGS = {
-    'idle_right': ['assets/images/characters/player_idle.png'],
-    'walk_right': ['assets/images/characters/player_walk1.png', 'assets/images/characters/player_walk2.png'],
-    'jump_right': ['assets/images/characters/player_jump.png']
-}
-
-GRASS_IMG = 'assets/images/tiles/grass_dirt.png'
-BLOCK_IMG = 'assets/images/tiles/block.png'
-FLAG_IMG = 'assets/images/tiles/flag.png'
-FLAGPOLE_IMG = 'assets/images/tiles/flagpole.png'
-
-''' items '''
-GEM_IMG = 'assets/images/items/gem.png'
-HEART_IMG = 'assets/images/items/heart.png'
-
-''' enemies '''
-CLOUD_IMG = 'assets/images/characters/cloud.png'
-SPIKEBALL_IMGS = {'rolling': ['assets/images/characters/spikeball1.png', 'assets/images/characters/spikeball2.png']}
-SPIKEMAN_IMGS = {'walk_right': ['assets/images/characters/spikeman_walk1.png', 'assets/images/characters/spikeman_walk2.png']}
-
-
 # Sounds
 JUMP_SND = 'assets/sounds/jump.wav'
 GEM_SND = 'assets/sounds/collect_point.wav'

@@ -5,6 +5,7 @@ import pygame
 
 # Local Imports
 import settings
+import tools
 
 import platformer.camera
 import platformer.overlays
@@ -29,39 +30,43 @@ class Game:
         self.new_game()
 
     def load_assets(self):
-        ''' platform tiles '''
-        self.grass_dirt_img = pygame.image.load(settings.GRASS_IMG).convert_alpha()
-        self.block_img = pygame.image.load(settings.BLOCK_IMG).convert_alpha()
+        images = tools.load_all_images('assets/images')
+
+        ''' platforms '''
+        self.grass_dirt_img = images['tiles']['grass_dirt']
+        self.block_img = images['tiles']['block']
         
         ''' hero '''
-        self.hero_images = {}
-        for key, paths in settings.HERO_IMGS.items():
-            self.hero_images[key] = [pygame.image.load(path).convert_alpha() for path in paths]
-
-        self.hero_images['idle_left'] = [pygame.transform.flip(image, True, False) for image in self.hero_images['idle_right']]
-        self.hero_images['walk_left'] = [pygame.transform.flip(image, True, False) for image in self.hero_images['walk_right']]
-        self.hero_images['jump_left'] = [pygame.transform.flip(image, True, False) for image in self.hero_images['jump_right']]
+        self.hero_images = {
+            'idle_right': [images['characters']['player_idle']],
+            'walk_right': [images['characters']['player_walk1'], images['characters']['player_walk2']],
+            'jump_right': [images['characters']['player_jump']],
+        }
+    
+        self.hero_images['idle_left'] = [tools.flip_img_x(image) for image in self.hero_images['idle_right']]
+        self.hero_images['walk_left'] = [tools.flip_img_x(image) for image in self.hero_images['walk_right']]
+        self.hero_images['jump_left'] = [tools.flip_img_x(image) for image in self.hero_images['jump_right']]
 
         ''' enemies '''
-        self.cloud_img = pygame.image.load(settings.CLOUD_IMG).convert_alpha()
+        self.cloud_img = images['characters']['cloud']
 
-        self.spikeball_imgs = {}
-        for key, paths in settings.SPIKEBALL_IMGS.items():
-            self.spikeball_imgs[key] = [pygame.image.load(path).convert_alpha() for path in paths]
+        self.spikeball_imgs = {
+            'rolling': [images['characters']['spikeball1'], images['characters']['spikeball2']]
+        }
         
-        self.spikeman_imgs = {}
-        for key, paths in settings.SPIKEMAN_IMGS.items():
-            self.spikeman_imgs[key] = [pygame.image.load(path).convert_alpha() for path in paths]
+        self.spikeman_imgs = {
+            'walk_right': [images['characters']['spikeman_walk1'], images['characters']['spikeman_walk2']]
+        }
         
-        self.spikeman_imgs['walk_left'] = [pygame.transform.flip(image, True, False) for image in self.spikeman_imgs['walk_right']]    
+        self.spikeman_imgs['walk_left'] = [tools.flip_img_x(image) for image in self.spikeman_imgs['walk_right']]    
 
         ''' items '''
-        self.gem_img = pygame.image.load(settings.GEM_IMG).convert_alpha()
-        self.heart_img = pygame.image.load(settings.HEART_IMG).convert_alpha()
+        self.gem_img = images['items']['gem']
+        self.heart_img = images['items']['heart']
         
         ''' goals '''
-        self.flag_img = pygame.image.load(settings.FLAG_IMG).convert_alpha()
-        self.flagpole_img = pygame.image.load(settings.FLAGPOLE_IMG).convert_alpha()
+        self.flag_img = images['tiles']['flag']
+        self.flagpole_img = images['tiles']['flagpole']
 
     def make_overlays(self):
         self.title_screen = platformer.overlays.TitleScreen(self)
@@ -86,6 +91,7 @@ class Game:
         self.camera = platformer.camera.ScrollingCamera(self.screen, self.world, self.hero, 0.9)
 
     def start_level(self):
+        self.camera.snap_to_target()
         self.status = settings.PLAYING
 
     def toggle_pause(self):
@@ -172,9 +178,11 @@ class Game:
         self.check_status()
     
     def render(self):
-        self.screen.fill(settings.SKY_BLUE)
-        
         offset_x, offset_y = self.camera.get_offsets()
+
+        #self.world.draw(offset_x, offset_y) <-- Good idea?
+
+        self.screen.fill(settings.SKY_BLUE)
 
         for sprite in self.world.nearby_sprites:
             x = sprite.rect.x - offset_x

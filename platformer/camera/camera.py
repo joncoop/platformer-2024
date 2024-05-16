@@ -71,6 +71,10 @@ class ScrollingCamera:
             pygame.draw.line(surface, pygame.Color('red'), [x, y - 10], [x, y + 10], 1)
             pygame.draw.line(surface, pygame.Color('red'), [x - 10, y], [x + 10, y], 1)
 
+    def snap_to_target(self):
+        self.focus = self.target.rect.center
+        self.last_position = self.focus
+
     def update(self):
         dx = self.target.rect.centerx - self.last_position[0]
         dy = self.target.rect.centery - self.last_position[1]
