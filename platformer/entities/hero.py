@@ -5,7 +5,7 @@ import pygame
 
 # Local Imports
 import settings
-from .entity import AnimatedEntity, Entity
+from .entity import AnimatedEntity
 
 
 class Hero(AnimatedEntity):
@@ -107,19 +107,19 @@ class Hero(AnimatedEntity):
         if self.facing_right:
             if self.on_platform:
                 if self.velocity.x == 0:
-                    self.images = self.world.game.hero_imgs_idle_right
+                    self.current_image_list = self.images['idle_right']
                 else:
-                    self.images = self.world.game.hero_imgs_walk_right
+                    self.current_image_list = self.images['walk_right']
             else:
-                self.images = self.world.game.hero_imgs_jump_right
+                self.current_image_list = self.images['jump_right']
         else:
             if self.on_platform:
                 if self.velocity.x == 0:
-                    self.images = self.world.game.hero_imgs_idle_left
+                    self.current_image_list = self.images['idle_left']
                 else:
-                    self.images = self.world.game.hero_imgs_walk_left
+                    self.current_image_list = self.images['walk_left']
             else:
-                self.images = self.world.game.hero_imgs_jump_left
+                self.current_image_list = self.images['jump_left']
 
     def update(self):
         self.apply_gravity()

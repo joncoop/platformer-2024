@@ -57,9 +57,9 @@ class SpikeMan(AnimatedEntity):
 
     def set_image_list(self):
         if self.velocity.x > 0:
-            self.images = self.world.game.spikeman_imgs_right
+            self.current_image_list = self.images['walk_right']
         else:
-            self.images = self.world.game.spikeman_imgs_left
+            self.current_image_list = self.images['walk_left']
 
     def update(self):
         self.apply_gravity()

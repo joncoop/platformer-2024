@@ -52,7 +52,7 @@ class World:
                 elif value == settings.SPIKEBALL:
                     self.enemies.add( platformer.entities.SpikeBall(self, self.game.spikeball_imgs, loc) )
                 elif value == settings.SPIKEMAN:
-                    self.enemies.add( platformer.entities.SpikeMan(self, self.game.spikeman_imgs_right, loc) )
+                    self.enemies.add( platformer.entities.SpikeMan(self, self.game.spikeman_imgs, loc) )
                 elif value == settings.GEM:
                     self.items.add( platformer.entities.Gem(self, self.game.gem_img, loc) )
                 elif value == settings.HEART:

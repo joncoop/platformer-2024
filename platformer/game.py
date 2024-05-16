@@ -5,6 +5,7 @@ import pygame
 
 # Local Imports
 import settings
+
 import platformer.camera
 import platformer.overlays
 import platformer.entities
@@ -28,28 +29,37 @@ class Game:
         self.new_game()
 
     def load_assets(self):
-        self.hero_imgs_idle_right = [pygame.image.load(settings.HERO_IMG_IDLE).convert_alpha()]
-        self.hero_imgs_walk_right = [pygame.image.load(settings.HERO_IMG_WALK1).convert_alpha(),
-                                     pygame.image.load(settings.HERO_IMG_WALK2).convert_alpha()]
-        self.hero_imgs_jump_right = [pygame.image.load(settings.HERO_IMG_JUMP).convert_alpha()]
-        self.hero_imgs_idle_left = [pygame.transform.flip(image, True, False) for image in self.hero_imgs_idle_right]
-        self.hero_imgs_walk_left = [pygame.transform.flip(image, True, False) for image in self.hero_imgs_walk_right]
-        self.hero_imgs_jump_left = [pygame.transform.flip(image, True, False) for image in self.hero_imgs_jump_right]
-
+        ''' platform tiles '''
         self.grass_dirt_img = pygame.image.load(settings.GRASS_IMG).convert_alpha()
         self.block_img = pygame.image.load(settings.BLOCK_IMG).convert_alpha()
-
-        self.cloud_img = pygame.image.load(settings.CLOUD_IMG).convert_alpha()
-        self.spikeball_imgs = [pygame.image.load(settings.SPIKEBALL_IMG1).convert_alpha(),
-                               pygame.image.load(settings.SPIKEBALL_IMG2).convert_alpha()]
         
-        self.spikeman_imgs_right = [pygame.image.load(settings.SPIKEMAN_IMG1).convert_alpha(),
-                                    pygame.image.load(settings.SPIKEMAN_IMG2).convert_alpha()]
-        self.spikeman_imgs_left = [pygame.transform.flip(image, True, False) for image in self.spikeman_imgs_right]
+        ''' hero '''
+        self.hero_images = {}
+        for key, paths in settings.HERO_IMGS.items():
+            self.hero_images[key] = [pygame.image.load(path).convert_alpha() for path in paths]
 
+        self.hero_images['idle_left'] = [pygame.transform.flip(image, True, False) for image in self.hero_images['idle_right']]
+        self.hero_images['walk_left'] = [pygame.transform.flip(image, True, False) for image in self.hero_images['walk_right']]
+        self.hero_images['jump_left'] = [pygame.transform.flip(image, True, False) for image in self.hero_images['jump_right']]
+
+        ''' enemies '''
+        self.cloud_img = pygame.image.load(settings.CLOUD_IMG).convert_alpha()
+
+        self.spikeball_imgs = {}
+        for key, paths in settings.SPIKEBALL_IMGS.items():
+            self.spikeball_imgs[key] = [pygame.image.load(path).convert_alpha() for path in paths]
+        
+        self.spikeman_imgs = {}
+        for key, paths in settings.SPIKEMAN_IMGS.items():
+            self.spikeman_imgs[key] = [pygame.image.load(path).convert_alpha() for path in paths]
+        
+        self.spikeman_imgs['walk_left'] = [pygame.transform.flip(image, True, False) for image in self.spikeman_imgs['walk_right']]    
+
+        ''' items '''
         self.gem_img = pygame.image.load(settings.GEM_IMG).convert_alpha()
         self.heart_img = pygame.image.load(settings.HEART_IMG).convert_alpha()
         
+        ''' goals '''
         self.flag_img = pygame.image.load(settings.FLAG_IMG).convert_alpha()
         self.flagpole_img = pygame.image.load(settings.FLAGPOLE_IMG).convert_alpha()
 
@@ -64,7 +74,7 @@ class Game:
         
     def new_game(self):
         # Make the hero here so it persists across levels
-        self.hero = platformer.entities.Hero(None, self.hero_imgs_idle_right, settings.CONTROLS)
+        self.hero = platformer.entities.Hero(None, self.hero_images, settings.CONTROLS)
 
         # Go to first level
         self.status = settings.START
@@ -109,7 +119,7 @@ class Game:
         elif self.status == settings.LEVEL_COMPLETE:
             current_time = pygame.time.get_ticks()
 
-            if current_time - self.level_complete_time > settings.TRANSITION_TIME:
+            if current_time - self.level_complete_time > settings.LEVEL_TRANSITION_TIME:
                 if self.level < len(settings.LEVELS):
                     self.advance()
                 else:

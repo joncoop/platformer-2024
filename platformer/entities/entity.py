@@ -110,16 +110,20 @@ class Entity(pygame.sprite.Sprite):
 
 class AnimatedEntity(Entity):
 
-    def __init__(self, world, images, loc=[0, 0]):        
-        super().__init__(world, images[0], loc)
+    def __init__(self, world, images, loc=[0, 0]):
+        first_key = next(iter(images))
+        first_image = images[first_key][0]
+
+        super().__init__(world, first_image, loc)
         
         self.images = images
+        self.current_image_list = self.images[first_key]
         self.animation_speed = 150 # Milliseconds
         self.last_time = pygame.time.get_ticks()
         self.image_index = 0
 
     def set_image_list(self):
-        self.images = self.images
+        pass
 
     def animate(self):
         current_time = pygame.time.get_ticks()
@@ -128,8 +132,8 @@ class AnimatedEntity(Entity):
             self.set_image_list()
 
             self.image_index += 1
-            if self.image_index >= len(self.images):
+            if self.image_index >= len(self.current_image_list):
                 self.image_index = 0
 
-            self.image = self.images[self.image_index]
+            self.image = self.current_image_list[self.image_index]
             self.last_time = current_time
