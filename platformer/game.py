@@ -1,4 +1,5 @@
 # Standard Library Imports
+import csv
 
 # Third-Party Imports
 import pygame
@@ -84,14 +85,64 @@ class Game:
         # Go to first level
         self.status = settings.START
         self.level = settings.STARTING_LEVEL
-        self.world = platformer.world.World(self, self.hero)
         self.current_zone = None
+        self.load_current_level()
 
-        # maybe move this?
+    def load_current_level(self):
+        # The hero, world, and camera all need to know about each other. It's making
+        # it difficult to figure out where and in what order to make each. Some of the 
+        # code is a little clunky because of this.
+
+        self.world = platformer.world.World(self.hero)
         self.camera = platformer.camera.ScrollingCamera(self.screen, self.world, self.hero, 0.9)
 
+        self.filepath = 'assets/levels/map_data.csv'
+        with open(self.filepath, 'r') as file:
+            reader = csv.reader(file)
+            map_data = list(reader)
+
+        data = {
+            'width': len(map_data[0]) * settings.GRID_SIZE,
+            'height': len(map_data) * settings.GRID_SIZE,
+            'players': pygame.sprite.Group(),
+            'platforms': pygame.sprite.Group(),
+            'goals': pygame.sprite.Group(),
+            'enemies': pygame.sprite.Group(),
+            'items': pygame.sprite.Group()
+        }
+
+        for y, row in enumerate(map_data):
+            for x, value in enumerate(row):
+                loc = [x, y]
+
+                if value == settings.HERO: # won't work with multiplayer game
+                    self.hero.move_to(loc)
+                    self.hero.world = self.world
+                    data['players'].add(self.hero)
+                elif value == settings.BLOCK:
+                    data['platforms'].add( platformer.entities.Tile(self.world, self.block_img, loc) )
+                elif value == settings.GRASS:
+                    data['platforms'].add( platformer.entities.Tile(self.world, self.grass_dirt_img, loc) )
+                elif value == settings.CLOUD:
+                    data['enemies'].add( platformer.entities.Cloud(self.world, self.cloud_img, loc) )
+                elif value == settings.SPIKEBALL:
+                    data['enemies'].add( platformer.entities.SpikeBall(self.world, self.spikeball_imgs, loc) )
+                elif value == settings.SPIKEMAN:
+                    data['enemies'].add( platformer.entities.SpikeMan(self.world, self.spikeman_imgs, loc) )
+                elif value == settings.GEM:
+                    data['items'].add( platformer.entities.Gem(self.world, self.gem_img, loc) )
+                elif value == settings.HEART:
+                    data['items'].add( platformer.entities.Heart(self.world, self.heart_img, loc) )
+                elif value == settings.FLAG:
+                    if len(data['goals']) == 0:
+                        data['goals'].add( platformer.entities.Tile(self.world, self.flag_img, loc) )
+                    else:
+                        data['goals'].add( platformer.entities.Tile(self.world, self.flagpole_img, loc) )
+            
+        self.world.add_data(data) # is this too cute?
+        #self.camera.snap_to_target()
+
     def start_level(self):
-        self.camera.snap_to_target()
         self.status = settings.PLAYING
 
     def toggle_pause(self):
@@ -105,7 +156,8 @@ class Game:
 
     def advance(self):
         self.level += 1
-        self.world = platformer.world.World(self, self.hero)
+        self.load_current_level()
+        self.camera.snap_to_target()
         self.start_level()
 
     def win(self):
@@ -178,17 +230,7 @@ class Game:
         self.check_status()
     
     def render(self):
-        offset_x, offset_y = self.camera.get_offsets()
-
-        #self.world.draw(offset_x, offset_y) <-- Good idea?
-
-        self.screen.fill(settings.SKY_BLUE)
-
-        for sprite in self.world.nearby_sprites:
-            x = sprite.rect.x - offset_x
-            y = sprite.rect.y - offset_y
-            self.screen.blit(sprite.image, [x, y])
-
+        self.world.draw(self.screen, self.camera)
         self.hud.draw(self.screen)
 
         if self.status == settings.START:
@@ -203,7 +245,7 @@ class Game:
             self.pause_screen.draw(self.screen)
 
         self.camera.draw(self.screen)
-        self.grid.draw(self.screen, offset_x, offset_y)
+        #self.grid.draw(self.screen, offset_x, offset_y)
 
     def play(self):
         while self.running:            

@@ -1,71 +1,24 @@
 # Standard Library Imports
-import csv
 
 # Third-Party Imports
 import pygame
 
 # Local Imports
 import settings
-import platformer.entities
 
 
 class World:
     
-    def __init__(self, game, hero):
-        self.filepath = 'assets/levels/map_data.csv'
-        self.game = game
-        self.hero = hero
-
-        self.print_info = True # Mostly for debugging
-
-        self.load()
-        
-    def load(self):
-        with open(self.filepath, 'r') as file:
-            reader = csv.reader(file)
-            map_data = list(reader)
-
-        # Make sprite groups
-        self.players = pygame.sprite.Group()
-        self.platforms = pygame.sprite.Group()
-        self.goals = pygame.sprite.Group()
-        self.enemies = pygame.sprite.Group()
-        self.items = pygame.sprite.Group()
-
-        self.width = len(map_data[0]) * settings.GRID_SIZE
-        self.height = len(map_data) * settings.GRID_SIZE
-
-        for y, row in enumerate(map_data):
-            for x, value in enumerate(row):
-                loc = [x, y]
-
-                if value == settings.HERO: # won't work with multiplayer game
-                    self.hero.world = self
-                    self.hero.move_to(loc)
-                    self.players.add(self.hero)
-                elif value == settings.BLOCK:
-                    self.platforms.add( platformer.entities.Tile(self, self.game.block_img, loc) )
-                elif value == settings.GRASS:
-                    self.platforms.add( platformer.entities.Tile(self, self.game.grass_dirt_img, loc) )
-                elif value == settings.CLOUD:
-                    self.enemies.add( platformer.entities.Cloud(self, self.game.cloud_img, loc) )
-                elif value == settings.SPIKEBALL:
-                    self.enemies.add( platformer.entities.SpikeBall(self, self.game.spikeball_imgs, loc) )
-                elif value == settings.SPIKEMAN:
-                    self.enemies.add( platformer.entities.SpikeMan(self, self.game.spikeman_imgs, loc) )
-                elif value == settings.GEM:
-                    self.items.add( platformer.entities.Gem(self, self.game.gem_img, loc) )
-                elif value == settings.HEART:
-                    self.items.add( platformer.entities.Heart(self, self.game.heart_img, loc) )
-                elif value == settings.FLAG:
-                    if len(self.goals) == 0:
-                        self.goals.add( platformer.entities.Tile(self, self.game.flag_img, loc) )
-                    else:
-                        self.goals.add( platformer.entities.Tile(self, self.game.flagpole_img, loc) )
+    def __init__(self, hero):
+        self.hero = hero # really dumb here, just can't get nearby sprite stuff working without this
+        self.print_info = True # Mostly for debugging and fps optimizing
 
         self.current_zone = None
-        self.find_nearby_sprites()
 
+    def add_data(self, data:dict):
+        self.__dict__.update(data)
+        print(self.__dict__)
+        self.find_nearby_sprites()
         if self.print_info:
             self.print_world_info()
 
@@ -117,7 +70,7 @@ class World:
             enemies = self.find_sprites_in_region(self.enemies, inner_region)
             self.nearby_enemies = pygame.sprite.Group(enemies)
 
-            # Things that don't interact with other objects should be in the inner region.
+            # Things that don't interact with other objects should be in the outer region.
             platforms = self.find_sprites_in_region(self.platforms, outer_region)
             self.nearby_platforms = pygame.sprite.Group(platforms)
             
@@ -139,3 +92,16 @@ class World:
 
         for sprite in self.nearby_sprites:
             sprite.update()
+
+    def draw(self, surface, camera=None):
+        if camera:
+            offset_x, offset_y = camera.get_offsets()
+        else:
+            offset_x, offset_y = 0, 0
+
+        surface.fill(settings.SKY_BLUE)
+
+        for sprite in self.nearby_sprites:
+            x = sprite.rect.x - offset_x
+            y = sprite.rect.y - offset_y
+            surface.blit(sprite.image, [x, y])
