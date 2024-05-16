@@ -93,12 +93,7 @@ class World:
         for sprite in self.nearby_sprites:
             sprite.update()
 
-    def draw(self, surface, camera=None):
-        if camera:
-            offset_x, offset_y = camera.get_offsets()
-        else:
-            offset_x, offset_y = 0, 0
-
+    def draw(self, surface, offset_x=0, offset_y=0):
         surface.fill(settings.SKY_BLUE)
 
         for sprite in self.nearby_sprites:

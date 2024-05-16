@@ -89,9 +89,9 @@ class Game:
         self.load_current_level()
 
     def load_current_level(self):
-        # The hero, world, and camera all need to know about each other. It's making
-        # it difficult to figure out where and in what order to make each. Some of the 
-        # code is a little clunky because of this.
+        # The hero and world need to know about each other. This is making it
+        # difficult to figure out where and in what order to make each. Some of  
+        # the code is a little clunky because of this.
 
         self.world = platformer.world.World(self.hero)
         self.camera = platformer.camera.ScrollingCamera(self.screen, self.world, self.hero, 0.9)
@@ -230,7 +230,9 @@ class Game:
         self.check_status()
     
     def render(self):
-        self.world.draw(self.screen, self.camera)
+        offset_x, offset_y = self.camera.get_offsets()
+
+        self.world.draw(self.screen, offset_x, offset_y)
         self.hud.draw(self.screen)
 
         if self.status == settings.START:
@@ -245,7 +247,7 @@ class Game:
             self.pause_screen.draw(self.screen)
 
         self.camera.draw(self.screen)
-        #self.grid.draw(self.screen, offset_x, offset_y)
+        self.grid.draw(self.screen, offset_x, offset_y)
 
     def play(self):
         while self.running:            
