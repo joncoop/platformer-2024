@@ -23,6 +23,10 @@ class Hero(AnimatedEntity):
         self.score = 0
         self.facing_right = True
 
+        print(self.resource_manager.sounds)
+
+        self.jump_sound = self.resource_manager.sounds['jump']
+
     def build_animation(self):
         images = {
             'idle_right': [self.resource_manager.images['characters']['player_idle']],
@@ -78,6 +82,7 @@ class Hero(AnimatedEntity):
     def jump(self):
         if self.can_jump:
             self.velocity.y = -1 * settings.HERO_JUMP_POWER
+            self.jump_sound.play()
 
     def act(self, events, pressed):
         for event in events:

@@ -71,9 +71,10 @@ class ResourceManager:
             subfolders = relative_path.split(os.path.sep)
             
             # Create nested dictionaries as needed
-            for subfolder in subfolders:
-                if self.has_files_of_type(filenames, accept):
-                    current_dict = current_dict.setdefault(subfolder, {})
+            if subfolders != ['.']:
+                for subfolder in subfolders:
+                    if self.has_files_of_type(filenames, accept):
+                        current_dict = current_dict.setdefault(subfolder, {})
 
             # Load images into the innermost dictionary
             for filename in filenames:
@@ -83,3 +84,21 @@ class ResourceManager:
                     path = os.path.join(root, filename)
                     current_dict[name] = self.load_image(path)
 
+    def load_all_sounds(self, folder, accept=(".ogg", ".mp3", ".wav")):
+        for root, dirs, filenames in os.walk(folder):
+            current_dict = self.sounds
+
+            relative_path = os.path.relpath(root, folder)
+            subfolders = relative_path.split(os.path.sep)
+
+            if subfolders != ['.']:
+                for subfolder in subfolders:
+                    if self.has_files_of_type(filenames, accept):
+                        current_dict = current_dict.setdefault(subfolder, {})
+
+            for filename in filenames:
+                name, ext = os.path.splitext(filename)
+
+                if ext.lower() in accept:
+                    path = os.path.join(root, filename)
+                    current_dict[name] = self.load_sound(path)

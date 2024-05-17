@@ -26,11 +26,6 @@ PRIMARY_FONT = 'assets/fonts/Dinomouse-Regular.otf'
 SECONDARY_FONT = 'assets/fonts/Dinomouse-Regular.otf'
 
 
-# Sounds
-JUMP_SND = 'assets/sounds/jump.wav'
-GEM_SND = 'assets/sounds/collect_point.wav'
-
-
 # Music
 TITLE_MUSIC = 'assets/music/calm_happy.ogg'
 MAIN_THEME = 'assets/music/cooking_mania.wav'

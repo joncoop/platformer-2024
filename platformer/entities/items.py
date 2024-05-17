@@ -12,19 +12,22 @@ from platformer.resource_manager import ResourceManager
 class Gem(Entity):
 
     def __init__(self, world, loc):
-        self.resource_manager = ResourceManager()
-        image = self.resource_manager.images['items']['gem']
+        resource_manager = ResourceManager()
+        image = resource_manager.images['items']['gem']
         super().__init__(world, image, loc)
+
+        self.collect_sound = resource_manager.sounds['collect_point']
 
     def apply(self, character):
         character.score += settings.GEM_VALUE
+        self.collect_sound.play()
 
 
 class Heart(Entity):
 
     def __init__(self, world, loc):
-        self.resource_manager = ResourceManager()
-        image = self.resource_manager.images['items']['heart']
+        resource_manager = ResourceManager()
+        image = resource_manager.images['items']['heart']
         super().__init__(world, image, loc)
 
     def apply(self, character):

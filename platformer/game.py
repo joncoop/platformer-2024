@@ -30,8 +30,10 @@ class Game:
         self.new_game()
 
     def load_assets(self):
-        resource_manager = platformer.resource_manager.ResourceManager()
-        resource_manager.load_all_images('assets/images')
+        self.resource_manager = platformer.resource_manager.ResourceManager()
+        
+        self.resource_manager.load_all_images('assets/images')
+        self.resource_manager.load_all_sounds('assets/sounds')
 
     def make_overlays(self):
         self.title_screen = platformer.overlays.TitleScreen(self)
