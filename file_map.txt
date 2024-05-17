@@ -4,6 +4,7 @@ platformer/
 ├── main.py
 ├── requirements.txt
 ├── settings.py
+├── tools.py
 │
 ├── assets
 │   ├── sources.txt
@@ -13,32 +14,30 @@ platformer/
 │   ├── music/
 │   └── sounds/
 │
-├── platformer/
-│   ├── __init__.py
-│   ├── game.py
-│   │
-│   ├── camera/
-│   │   ├── __init__.py
-│   │   └── camera.py
-│   │
-│   └── entities/
-│   │   ├── __init__.py
-│   │   ├── enemies.py
-│   │   ├── entity.py
-│   │   ├── hero.py
-│   │   ├── items.py
-│   │   └── tiles.py
-│   │   
-│   ├── overlays/
-│   │   ├── __init__.py
-│   │   ├── grid.py   
-│   │   ├── hud.py   
-│   │   └── scenes.py
-│   │   
-│   └── world/
-│       ├── __init__.py
-│       └── world.py
-│
-└── tests/
+└── platformer/
     ├── __init__.py
-    └── test_game.py
+    ├── game.py
+    ├── resource_manager.py
+    │
+    ├── camera/
+    │   ├── __init__.py
+    │   └── camera.py
+    │
+    ├── entities/
+    │   ├── __init__.py
+    │   ├── enemies.py
+    │   ├── entity.py
+    │   ├── hero.py
+    │   ├── items.py
+    │   └── tiles.py
+    │   
+    ├── overlays/
+    │   ├── __init__.py
+    │   ├── grid.py   
+    │   ├── hud.py   
+    │   └── scenes.py
+    │   
+    └── world/
+        ├── __init__.py
+        └── world.py
+

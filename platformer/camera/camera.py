@@ -14,7 +14,7 @@ class ScrollingCamera:
         self.world = world
         self.target = target # sprite object to track
         #self.lag = lag - 1
-        self.lag = -(lag - 1) ** 2 + 1 # 0 <= lag < 1, made it more sensitive at low numbers
+        self.lag = math.sqrt(lag) # 0 <= lag < 1, sqrt makes it more sensitive at low numbers
 
         self.last_position = self.target.rect.center
         self.focus = self.last_position

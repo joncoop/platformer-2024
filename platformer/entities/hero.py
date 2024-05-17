@@ -6,12 +6,14 @@ import pygame
 # Local Imports
 import settings
 from .entity import AnimatedEntity
+from platformer.resource_manager import ResourceManager
 
 
 class Hero(AnimatedEntity):
 
-    def __init__(self, world, images, controls):
-        super().__init__(world, images)
+    def __init__(self, world, controls):
+        self.resource_manager = ResourceManager()
+        super().__init__(world, self.build_animation())
         self.controls = controls
 
         self.acceleration = 0.8
@@ -21,8 +23,19 @@ class Hero(AnimatedEntity):
         self.score = 0
         self.facing_right = True
 
-        self.respawn_location = self.location
+    def build_animation(self):
+        images = {
+            'idle_right': [self.resource_manager.images['characters']['player_idle']],
+            'walk_right': [self.resource_manager.images['characters']['player_walk1'], self.resource_manager.images['characters']['player_walk2']],
+            'jump_right': [self.resource_manager.images['characters']['player_jump']],
+        }
+    
+        images['idle_left'] = [pygame.transform.flip(image, True, False) for image in images['idle_right']]
+        images['walk_left'] = [pygame.transform.flip(image, True, False) for image in images['walk_right']]
+        images['jump_left'] = [pygame.transform.flip(image, True, False) for image in images['jump_right']]
 
+        return images
+    
     @property
     def is_alive(self):
         return self.hearts > 0

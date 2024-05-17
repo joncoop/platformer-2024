@@ -1,10 +1,12 @@
 # Standard Library Imports
+import csv
 
 # Third-Party Imports
 import pygame
 
 # Local Imports
 import settings
+import platformer.entities
 
 
 class World:
@@ -16,11 +18,55 @@ class World:
 
         self.current_zone = None
 
-    def add_data(self, data:dict):
+    def load(self, path):
+        with open(path, 'r') as file:
+            reader = csv.reader(file)
+            map_data = list(reader)
+
+        data = {
+            'width': len(map_data[0]) * settings.GRID_SIZE,
+            'height': len(map_data) * settings.GRID_SIZE,
+            'players': pygame.sprite.Group(),
+            'platforms': pygame.sprite.Group(),
+            'goals': pygame.sprite.Group(),
+            'enemies': pygame.sprite.Group(),
+            'items': pygame.sprite.Group()
+        }
+
+        for y, row in enumerate(map_data):
+            for x, value in enumerate(row):
+                loc = [x, y]
+
+                if value == settings.HERO: # won't work with multiplayer game
+                    self.hero.move_to(loc)
+                    self.hero.world = self
+                    data['players'].add(self.hero)
+                elif value == settings.BLOCK:
+                    data['platforms'].add( platformer.entities.Tile(self, loc, 'block') )
+                elif value == settings.GRASS:
+                    data['platforms'].add( platformer.entities.Tile(self, loc, 'grass_dirt') )
+                elif value == settings.CLOUD:
+                    data['enemies'].add( platformer.entities.Cloud(self, loc) )
+                elif value == settings.SPIKEBALL:
+                    data['enemies'].add( platformer.entities.SpikeBall(self, loc) )
+                elif value == settings.SPIKEMAN:
+                    data['enemies'].add( platformer.entities.SpikeMan(self, loc) )
+                elif value == settings.GEM:
+                    data['items'].add( platformer.entities.Gem(self, loc) )
+                elif value == settings.HEART:
+                    data['items'].add( platformer.entities.Heart(self, loc) )
+                elif value == settings.FLAG:
+                    if len(data['goals']) == 0:
+                        data['goals'].add( platformer.entities.Tile(self, loc, 'flag') )
+                    else:
+                        data['goals'].add( platformer.entities.Tile(self, loc, 'flagpole') )
+            
         self.__dict__.update(data)
-        print(self.__dict__)
-        self.find_nearby_sprites()
+
+        
+
         if self.print_info:
+            self.find_nearby_sprites()
             self.print_world_info()
 
     def print_world_info(self):

@@ -6,12 +6,16 @@ import pygame
 # Local Imports
 import settings
 from .entity import AnimatedEntity, Entity
+from platformer.resource_manager import ResourceManager
 
 
 # Enemies
 class Cloud(Entity):
 
-    def __init__(self, world, image, loc):
+    def __init__(self, world, loc):
+        self.resource_manager = ResourceManager()
+        image = self.resource_manager.images['characters']['cloud']
+
         super().__init__(world, image, loc)
 
         self.velocity.x = -1 * settings.CLOUD_SPEED
@@ -26,11 +30,17 @@ class Cloud(Entity):
 
 class SpikeBall(AnimatedEntity):
 
-    def __init__(self, world, images, loc):
-        super().__init__(world, images, loc)
+    def __init__(self, world, loc):
+        self.resource_manager = ResourceManager()
+        super().__init__(world, self.build_animation(), loc)
 
         self.velocity.x = -1 * settings.SPIKEBALL_SPEED
 
+    def build_animation(self):
+        images = {'rolling': [self.resource_manager.images['characters']['spikeball1'], self.resource_manager.images['characters']['spikeball2']]}
+
+        return images
+    
     def update(self):
         self.apply_gravity()
         self.move_x()
@@ -50,11 +60,18 @@ class SpikeBall(AnimatedEntity):
 
 class SpikeMan(AnimatedEntity):
 
-    def __init__(self, world, images, loc):
-        super().__init__(world, images, loc)
+    def __init__(self, world, loc):
+        self.resource_manager = ResourceManager()
+        super().__init__(world, self.build_animation(), loc)
 
         self.velocity.x = -1 * settings.SPIKEMAN_SPEED
 
+    def build_animation(self):
+        images = {'walk_right': [self.resource_manager.images['characters']['spikeman_walk1'], self.resource_manager.images['characters']['spikeman_walk2']]}
+        images['walk_left'] = [pygame.transform.flip(image, True, False) for image in images['walk_right']]
+
+        return images
+    
     def set_image_list(self):
         if self.velocity.x > 0:
             self.current_image_list = self.images['walk_right']
