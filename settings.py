@@ -90,8 +90,8 @@ GEM_VALUE = 10
 
 # Gameplay settings
 CONTROLS = {
-        'left': pygame.K_LEFT,
-        'right': pygame.K_RIGHT,
+        'left': pygame.K_a,
+        'right': pygame.K_d,
         'jump': pygame.K_SPACE,
 }
 
