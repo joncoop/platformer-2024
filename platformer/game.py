@@ -17,7 +17,7 @@ import platformer.world
 class Game:
 
     def __init__(self):
-        pygame.mixer.pre_init()
+        pygame.mixer.pre_init(44100, -16, 2, 4096)
         pygame.init()
 
         self.screen = pygame.display.set_mode([settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT])
@@ -30,10 +30,14 @@ class Game:
         self.new_game()
 
     def load_assets(self):
-        self.resource_manager = platformer.resource_manager.ResourceManager()
+        resource_manager = platformer.resource_manager.ResourceManager()
         
-        self.resource_manager.load_all_images('assets/images')
-        self.resource_manager.load_all_sounds('assets/sounds')
+        resource_manager.load_all_images('assets/images')
+        resource_manager.load_all_sounds('assets/sounds')
+        resource_manager.load_all_music('assets/music')
+
+        self.start_music = resource_manager.music['calm_happy']
+        self.theme_music = resource_manager.music['cooking_mania']
 
     def make_overlays(self):
         self.title_screen = platformer.overlays.TitleScreen(self)
@@ -54,6 +58,8 @@ class Game:
         self.current_zone = None
         self.load_current_level()
 
+        self.play_music(self.start_music)
+
     def load_current_level(self):
         # The hero and world need to know about each other. This is making it
         # difficult to figure out where and in what order to make each. Some of  
@@ -67,6 +73,12 @@ class Game:
 
     def start_level(self):
         self.status = settings.PLAYING
+        self.play_music(self.theme_music) # this does not accout for music in level data, move later
+
+    def play_music(self, track, loops=-1, volume=1.0):
+        pygame.mixer.music.load(track)
+        pygame.mixer.music.set_volume(volume)
+        pygame.mixer.music.play(loops)
 
     def toggle_pause(self):
         if self.status == settings.PLAYING:

@@ -23,8 +23,6 @@ class Hero(AnimatedEntity):
         self.score = 0
         self.facing_right = True
 
-        print(self.resource_manager.sounds)
-
         self.jump_sound = self.resource_manager.sounds['jump']
 
     def build_animation(self):

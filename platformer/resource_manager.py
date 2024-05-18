@@ -34,15 +34,6 @@ class ResourceManager:
 
         return image
 
-
-    def flip_img_x(image):
-        return pygame.transform.flip(image, True, False)
-
-
-    def flip_img_y(image):
-        return pygame.transform.flip(image, False, True)
-
-
     def load_sound(self, path):
         return pygame.mixer.Sound(path)
 
@@ -102,3 +93,25 @@ class ResourceManager:
                 if ext.lower() in accept:
                     path = os.path.join(root, filename)
                     current_dict[name] = self.load_sound(path)
+
+    def load_all_music(self, folder, accept=(".ogg", ".mp3", ".wav")):
+        '''
+        Paths to all music files.
+        '''
+        for root, dirs, filenames in os.walk(folder):
+            current_dict = self.music
+
+            relative_path = os.path.relpath(root, folder)
+            subfolders = relative_path.split(os.path.sep)
+
+            if subfolders != ['.']:
+                for subfolder in subfolders:
+                    if self.has_files_of_type(filenames, accept):
+                        current_dict = current_dict.setdefault(subfolder, {})
+
+            for filename in filenames:
+                name, ext = os.path.splitext(filename)
+
+                if ext.lower() in accept:
+                    path = os.path.join(root, filename)
+                    current_dict[name] = path

@@ -19,13 +19,14 @@ class Tile(Entity):
     def set_image(self, tile_type):
         return self.resource_manager.images['tiles'][tile_type]
 
+
 class AnimatedTile(AnimatedEntity):
 
     def __init__(self, world, images, loc):
         super().__init__(world, images, loc)
 
     def update(self, *args: Any, **kwargs: Any) -> None:
-        return super().update(*args, **kwargs)
+        pass
     
 
 class MovingTile(Entity):
@@ -34,4 +35,4 @@ class MovingTile(Entity):
         super().__init__(world, image, loc)
 
     def update(self, *args: Any, **kwargs: Any) -> None:
-        return super().update(*args, **kwargs)
+        pass

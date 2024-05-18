@@ -14,7 +14,7 @@ class World:
     def __init__(self, hero):
         self.hero = hero # really dumb here, just can't get nearby sprite stuff working without this
                          # maybe could pass hero to update
-        self.print_info = True # Mostly for debugging and fps optimizing
+        self.print_info = False # Mostly for debugging and fps optimizing
 
         self.current_zone = None
 
@@ -63,10 +63,9 @@ class World:
             
         self.__dict__.update(data)
 
-        
+        self.find_nearby_sprites()
 
         if self.print_info:
-            self.find_nearby_sprites()
             self.print_world_info()
 
     def print_world_info(self):
